@@ -22,7 +22,7 @@ def run_script(script_name):
 if model_type == "Decision Tree":
     # max_depth = st.sidebar.slider(
     #     "Max Depth of Decision Tree", min_value=1, max_value=10, value=3
-    # )
+    # )s
     run_script("scripts/decision_tree_app.py")
 elif model_type == "Logistic Regression":
     run_script("scripts/logistic_regression_app.py")

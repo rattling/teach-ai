@@ -14,6 +14,7 @@ graphviz = "*"
 pydotplus = "*"
 Pillow = "*"
 matplotlib-venn = "*"
+networkx = "*"
 
 [dev-packages]
 ipykernel = "*"

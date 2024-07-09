@@ -132,6 +132,23 @@ Even with high accuracy, a low recall indicates that many fraud transactions are
 """
 )
 
+# Explanation of precision and recall
+st.markdown(
+    """
+### Still a bit confusing? Think of it in business terms
+
+##### What does a model with high precision and low recall look like in a business context?
+- We are low on false positives or false alarms. It means that customers are rarely bothered with incorrect fraud alerts.
+- However, we are missing a lot of fraud transactions. This could lead to significant financial losses for the bank or customer.
+
+##### What does a model with low precision and high recall look like in a business context?
+- We are catching a lot of fraud transactions. This is great for preventing financial losses.
+- However, we are also raising a lot of false alarms. This could lead to customer dissatisfaction and loss of trust in the bank.
+
+- So we have to balance the two.  In practise, catching fraud is probably enough to justify a few false alarms. We find the right balance by adjusting the threshold.
+"""
+)
+
 # Visualize precision and recall impact
 st.write("### Precision and Recall Impact")
 
