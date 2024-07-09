@@ -11,6 +11,9 @@ numpy = "*"
 matplotlib = "*"
 seaborn = "*"
 graphviz = "*"
+pydotplus = "*"
+Pillow = "*"
+
 
 [dev-packages]
 ipykernel = "*"
