@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dc4f17f32b96a85393bb0b2290d7a01f0e6b4103ae6087121c511d78ca6c5be2"
+            "sha256": "5bce9788f7d0b0d7c78fa2d9570d69bbc8c3eb6328b5697b12d9f9d6b995fed9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -552,6 +552,14 @@
             "markers": "python_version >= '3.9'",
             "version": "==3.9.1"
         },
+        "matplotlib-venn": {
+            "hashes": [
+                "sha256:85650429baff7a812b2785540979e6bf0abcc747e7fe5ffd2a972cb917a826d6",
+                "sha256:90d0cfb279c5dbbdf7dfd722c0e2515a37f535e949bcad174483bc777e372e65"
+            ],
+            "index": "pypi",
+            "version": "==0.11.10"
+        },
         "mdurl": {
             "hashes": [
                 "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8",
@@ -739,6 +747,7 @@
                 "sha256:ff25afb18123cea58a591ea0244b92eb1e61a1fd497bf6d6384f09bc3262ec3e",
                 "sha256:ff337c552345e95702c5fde3158acb0625111017d0e5f24bf3acdb9cc16b90d1"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==10.4.0"
         },
@@ -808,6 +817,13 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==0.9.1"
+        },
+        "pydotplus": {
+            "hashes": [
+                "sha256:91e85e9ee9b85d2391ead7d635e3d9c7f5f44fd60a60e59b13e2403fa66505c4"
+            ],
+            "index": "pypi",
+            "version": "==2.0.2"
         },
         "pygments": {
             "hashes": [

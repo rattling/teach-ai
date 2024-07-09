@@ -13,7 +13,7 @@ seaborn = "*"
 graphviz = "*"
 pydotplus = "*"
 Pillow = "*"
-
+matplotlib-venn = "*"
 
 [dev-packages]
 ipykernel = "*"
