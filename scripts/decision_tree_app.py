@@ -78,6 +78,8 @@ st.write(data.head())
 
 # Visualizations
 st.write("### Data Visualizations")
+
+# Create box plots
 fig, axes = plt.subplots(2, 3, figsize=(20, 10))
 
 sns.boxplot(x="creditworthy", y="age", data=data, ax=axes[0, 0])
@@ -86,7 +88,14 @@ sns.boxplot(x="creditworthy", y="months_employed", data=data, ax=axes[0, 2])
 sns.boxplot(x="creditworthy", y="avg_credit_card_bal", data=data, ax=axes[1, 0])
 sns.boxplot(x="creditworthy", y="months_with_bank", data=data, ax=axes[1, 1])
 
-# Bar plot for the dummified education_level variables
+axes[1, 2].axis("off")  # Hide the unused subplot
+
+st.pyplot(fig)
+
+# Create a new figure for the bar plot
+st.write("### Bar Plot for Dummified Education Level Variables")
+fig, ax = plt.subplots(figsize=(10, 5))
+
 education_levels = [
     "education_level_Junior Certificate",
     "education_level_Leaving Certificate",
@@ -95,12 +104,21 @@ education_levels = [
     "education_level_NFQ9",
 ]
 data_melted = pd.melt(data, id_vars=["creditworthy"], value_vars=education_levels)
-sns.barplot(
-    x="variable", y="value", hue="creditworthy", data=data_melted, ax=axes[1, 2]
+
+# Shorten the labels for the plot
+data_melted["variable"] = data_melted["variable"].replace(
+    {
+        "education_level_Junior Certificate": "Junior",
+        "education_level_Leaving Certificate": "Leaving",
+        "education_level_NFQ7": "NFQ7",
+        "education_level_NFQ8": "NFQ8",
+        "education_level_NFQ9": "NFQ9",
+    }
 )
 
-st.pyplot(fig)
+sns.barplot(x="variable", y="value", hue="creditworthy", data=data_melted, ax=ax)
 
+st.pyplot(fig)
 # Create a new figure for the heatmap
 st.write("### Correlation Heatmap")
 fig, ax = plt.subplots(figsize=(15, 10))
@@ -115,6 +133,38 @@ st.markdown(
 Training a decision tree on the prepared dataset.
 """
 )
+
+# Split data into train and test sets
+X = data.drop("creditworthy", axis=1)
+y = data["creditworthy"]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Show data split information and pie chart side by side
+st.write("### Split Data into Train and Test")
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    st.write(f"Training set size: {X_train.shape[0]} samples")
+    st.write(f"Test set size: {X_test.shape[0]} samples")
+
+with col2:
+    # Create pie chart for data split
+    split_labels = ["Train", "Test"]
+    split_sizes = [X_train.shape[0], X_test.shape[0]]
+    fig, ax = plt.subplots(
+        figsize=(2, 2)
+    )  # Adjust figure size to make pie chart smaller
+    ax.pie(
+        split_sizes,
+        labels=split_labels,
+        autopct="%1.1f%%",
+        startangle=90,
+        colors=["#ff9999", "#66b3ff"],
+    )
+    ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+    st.pyplot(fig)
 
 X = data.drop("creditworthy", axis=1)
 y = data["creditworthy"]
@@ -145,47 +195,75 @@ Evaluating the model on a test set.
 """
 )
 
-# Predict and evaluate
-y_pred = clf.predict(X_test)
+# Predict and evaluate on training data
+y_train_pred = clf.predict(X_train)
+train_accuracy = accuracy_score(y_train, y_train_pred)
+train_precision = precision_score(
+    y_train, y_train_pred, pos_label=1
+)  # Precision for positive class
+train_recall = recall_score(
+    y_train, y_train_pred, pos_label=1
+)  # Recall for positive class
 
-# Calculate the metrics
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred, pos_label=1)  # Precision for positive class
-recall = recall_score(y_test, y_pred, pos_label=1)  # Recall for positive class
+# Predict and evaluate on testing data
+y_test_pred = clf.predict(X_test)
+test_accuracy = accuracy_score(y_test, y_test_pred)
+test_precision = precision_score(
+    y_test, y_test_pred, pos_label=1
+)  # Precision for positive class
+test_recall = recall_score(
+    y_test, y_test_pred, pos_label=1
+)  # Recall for positive class
 
-# Display the metrics
+# Format the metrics as integers (percentages with no decimal places)
+train_accuracy = int(train_accuracy * 100)
+train_precision = int(train_precision * 100)
+train_recall = int(train_recall * 100)
+test_accuracy = int(test_accuracy * 100)
+test_precision = int(test_precision * 100)
+test_recall = int(test_recall * 100)
+
+# Display the metrics in a table
 st.write("### Model Performance")
-st.metric(label="Accuracy", value=f"{accuracy:.2f}")
-st.metric(label="Precision (Positive Class)", value=f"{precision:.2f}")
-st.metric(label="Recall (Positive Class)", value=f"{recall:.2f}")
-
-# Detailed classification report (optional)
-st.write("### Detailed Classification Report")
-st.text(classification_report(y_test, y_pred))
+performance_data = {
+    "Set": ["Train", "Test"],
+    "Accuracy": [f"{train_accuracy}%", f"{test_accuracy}%"],
+    "Precision": [f"{train_precision}%", f"{test_precision}%"],
+    "Recall": [f"{train_recall}%", f"{test_recall}%"],
+}
+performance_df = pd.DataFrame(performance_data)
+st.table(performance_df)
 
 st.write("### Confusion Matrix")
-conf_matrix = confusion_matrix(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_test_pred)
 
 # Plot confusion matrix
-fig, ax = plt.subplots(figsize=(3, 3))  # Adjust the size here
+st.write("### Confusion Matrix")
+fig, ax = plt.subplots(
+    figsize=(2, 2)
+)  # Adjust figure size to make confusion matrix smaller
 sns.heatmap(
     conf_matrix,
     annot=True,
     fmt="d",
     cmap="coolwarm",
-    xticklabels=["Creditworthy", "Not Creditworthy"],
-    yticklabels=["Creditworthy", "Not Creditworthy"],
+    xticklabels=["Not Creditworthy", "Creditworthy"],
+    yticklabels=["Not Creditworthy", "Creditworthy"],
     ax=ax,
     cbar=False,
 )
 ax.set_xlabel("Predicted")
 ax.set_ylabel("True")
 
+# Adjust font size for tick labels
+ax.tick_params(axis="both", which="major", labelsize=6)
+
 # Move the x-axis label to the top
 ax.xaxis.set_label_position("top")
 ax.xaxis.tick_top()
 
 st.pyplot(fig)
+
 
 # Inference
 st.header("Inference on New Data")
@@ -226,17 +304,17 @@ prediction_label = "Creditworthy" if prediction == 1 else "Not Creditworthy"
 st.write(f"### Prediction: {prediction_label}")
 st.write(f"### Confidence: {prediction_proba[prediction]:.2f}")
 
-# Visualize the confidence
-st.write("### Prediction Confidence")
-fig, ax = plt.subplots(figsize=(5, 3))
-sns.barplot(
-    x=["Not Creditworthy", "Creditworthy"],
-    y=prediction_proba,
-    palette="coolwarm",
-    ax=ax,
-)
-ax.set_ylabel("Probability")
-st.pyplot(fig)
+# # Visualize the confidence
+# st.write("### Prediction Confidence")
+# fig, ax = plt.subplots(figsize=(5, 3))
+# sns.barplot(
+#     x=["Not Creditworthy", "Creditworthy"],
+#     y=prediction_proba,
+#     palette="coolwarm",
+#     ax=ax,
+# )
+# ax.set_ylabel("Probability")
+# st.pyplot(fig)
 
 
 # Function to get the decision path
