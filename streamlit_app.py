@@ -8,7 +8,7 @@ st.set_page_config(
 # Sidebar for model and use case selection
 st.sidebar.title("Options")
 model_type = st.sidebar.selectbox(
-    "Choose a model", ["Decision Tree", "Logistic Regression", "Network Analysis"]
+    "Choose a model", ["Decision Tree", "Logistic Regression", "Clustering"]
 )
 
 
@@ -28,3 +28,5 @@ elif model_type == "Logistic Regression":
     run_script("scripts/logistic_regression_app.py")
 elif model_type == "Network Analysis":
     run_script("scripts/network_analysis_app.py")
+elif model_type == "Clustering":
+    run_script("scripts/clustering_app.py")

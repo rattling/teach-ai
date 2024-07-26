@@ -231,7 +231,7 @@ def main():
 
     if not data.empty:
         # Select number of clusters
-        num_clusters = st.slider("Select Number of Clusters", 2, 10, 5)
+        num_clusters = st.sidebar.slider("Select Number of Clusters", 2, 10, 5)
 
         # Select features for clustering
         features = [
