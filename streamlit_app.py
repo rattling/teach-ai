@@ -16,12 +16,6 @@ model_type = st.sidebar.selectbox(
 )
 
 
-# Function to run a script based on user selection
-def run_script(script_name):
-    with open(script_name) as script_file:
-        exec(script_file.read(), globals())
-
-
 # Run the appropriate script based on the model type
 if model_type == "Decision Tree":
     # max_depth = st.sidebar.slider(
