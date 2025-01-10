@@ -7,8 +7,10 @@ import seaborn as sns
 from sklearn.decomposition import PCA
 
 
-def load_data():
-    return pd.read_csv("data/clustering.csv")
+@st.cache_data
+def load_data(file_path):
+    print(f"Loading data from {file_path}")
+    return pd.read_csv(file_path)
 
 
 # K-Means clustering
@@ -102,7 +104,7 @@ def clustering_main():
     )
 
     # Load data
-    data = load_data()
+    data = load_data("data/clustering.csv")
 
     if not data.empty:
         # Select number of clusters

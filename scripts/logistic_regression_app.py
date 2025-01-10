@@ -14,8 +14,9 @@ import seaborn as sns
 from matplotlib_venn import venn2
 
 
-# Function to load data
+@st.cache_data
 def load_data(file_path):
+    print(f"Loading data from {file_path}")
     return pd.read_csv(file_path)
 
 
