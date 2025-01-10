@@ -1,8 +1,12 @@
 import streamlit as st
+from scripts.decision_tree_app import decision_tree_main
+from scripts.logistic_regression_app import logistic_regression_main
+from scripts.clustering_app import clustering_main
 
 # Set up the Streamlit app
 st.set_page_config(
-    page_title="Supervised Machine Learning in Financial Services", layout="wide"
+    page_title="Supervised Machine Learning in Financial Services",
+    layout="wide",
 )
 
 # Sidebar for model and use case selection
@@ -23,10 +27,8 @@ if model_type == "Decision Tree":
     # max_depth = st.sidebar.slider(
     #     "Max Depth of Decision Tree", min_value=1, max_value=10, value=3
     # )s
-    run_script("scripts/decision_tree_app.py")
+    decision_tree_main()
 elif model_type == "Logistic Regression":
-    run_script("scripts/logistic_regression_app.py")
-elif model_type == "Network Analysis":
-    run_script("scripts/network_analysis_app.py")
+    logistic_regression_main()
 elif model_type == "Clustering":
-    run_script("scripts/clustering_app.py")
+    clustering_main()

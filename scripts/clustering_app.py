@@ -19,7 +19,9 @@ def load_data():
                     np.random.randint(30, 50, 50),  # Active Gamers
                     np.random.randint(18, 25, 50),  # Urban Sport Enthusiasts
                     np.random.randint(30, 40, 50),  # Gourmet Gardeners
-                    np.random.randint(25, 45, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        25, 45, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Annual Income (k$)": np.concatenate(
@@ -28,7 +30,9 @@ def load_data():
                     np.random.randint(40, 100, 50),  # Active Gamers
                     np.random.randint(10, 30, 50),  # Urban Sport Enthusiasts
                     np.random.randint(40, 80, 50),  # Gourmet Gardeners
-                    np.random.randint(50, 120, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        50, 120, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Spending Score (1-100)": np.concatenate(
@@ -37,7 +41,9 @@ def load_data():
                     np.random.randint(60, 90, 50),  # Active Gamers
                     np.random.randint(20, 60, 50),  # Urban Sport Enthusiasts
                     np.random.randint(30, 70, 50),  # Gourmet Gardeners
-                    np.random.randint(50, 90, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        50, 90, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Region": np.concatenate(
@@ -64,7 +70,9 @@ def load_data():
                     np.random.randint(1, 40, 50),  # Active Gamers
                     np.random.randint(1, 20, 50),  # Urban Sport Enthusiasts
                     np.random.randint(1, 30, 50),  # Gourmet Gardeners
-                    np.random.randint(30, 60, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        30, 60, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Interest in Video Games": np.concatenate(
@@ -73,7 +81,9 @@ def load_data():
                     np.random.randint(60, 100, 50),  # Active Gamers
                     np.random.randint(10, 40, 50),  # Urban Sport Enthusiasts
                     np.random.randint(10, 30, 50),  # Gourmet Gardeners
-                    np.random.randint(50, 90, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        50, 90, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Interest in Sports": np.concatenate(
@@ -82,7 +92,9 @@ def load_data():
                     np.random.randint(40, 80, 50),  # Active Gamers
                     np.random.randint(60, 100, 50),  # Urban Sport Enthusiasts
                     np.random.randint(30, 70, 50),  # Gourmet Gardeners
-                    np.random.randint(30, 70, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        30, 70, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Interest in Dining": np.concatenate(
@@ -91,7 +103,9 @@ def load_data():
                     np.random.randint(20, 60, 50),  # Active Gamers
                     np.random.randint(20, 50, 50),  # Urban Sport Enthusiasts
                     np.random.randint(60, 100, 50),  # Gourmet Gardeners
-                    np.random.randint(40, 70, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        40, 70, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Interest in Gardening": np.concatenate(
@@ -100,7 +114,9 @@ def load_data():
                     np.random.randint(10, 50, 50),  # Active Gamers
                     np.random.randint(10, 40, 50),  # Urban Sport Enthusiasts
                     np.random.randint(60, 100, 50),  # Gourmet Gardeners
-                    np.random.randint(20, 50, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        20, 50, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Interest in Music": np.concatenate(
@@ -109,7 +125,9 @@ def load_data():
                     np.random.randint(20, 60, 50),  # Active Gamers
                     np.random.randint(20, 50, 50),  # Urban Sport Enthusiasts
                     np.random.randint(30, 70, 50),  # Gourmet Gardeners
-                    np.random.randint(50, 90, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        50, 90, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
             "Household Income (k$)": np.concatenate(
@@ -118,7 +136,9 @@ def load_data():
                     np.random.randint(40, 100, 50),  # Active Gamers
                     np.random.randint(10, 30, 50),  # Urban Sport Enthusiasts
                     np.random.randint(40, 80, 50),  # Gourmet Gardeners
-                    np.random.randint(50, 120, 100),  # Tech-Savvy Remote Workers
+                    np.random.randint(
+                        50, 120, 100
+                    ),  # Tech-Savvy Remote Workers
                 ]
             ),
         }
@@ -140,29 +160,15 @@ def generate_cluster_descriptions(data, cluster_means):
     for cluster_id, cluster_data in cluster_means.iterrows():
         description = f"Cluster {cluster_id}:"
         description += f"\n- Average Age: {cluster_data['Age']:.1f} years"
-        description += (
-            f"\n- Average Annual Income: ${cluster_data['Annual Income (k$)']:.1f}k"
-        )
-        description += (
-            f"\n- Average Spending Score: {cluster_data['Spending Score (1-100)']:.1f}"
-        )
-        description += (
-            f"\n- Predominant Region: {region_map[round(cluster_data['Region'])]}"
-        )
-        description += (
-            f"\n- Interest in Travel: {cluster_data['Interest in Travel']:.1f}/100"
-        )
+        description += f"\n- Average Annual Income: ${cluster_data['Annual Income (k$)']:.1f}k"
+        description += f"\n- Average Spending Score: {cluster_data['Spending Score (1-100)']:.1f}"
+        description += f"\n- Predominant Region: {region_map[round(cluster_data['Region'])]}"
+        description += f"\n- Interest in Travel: {cluster_data['Interest in Travel']:.1f}/100"
         description += f"\n- Interest in Video Games: {cluster_data['Interest in Video Games']:.1f}/100"
-        description += (
-            f"\n- Interest in Sports: {cluster_data['Interest in Sports']:.1f}/100"
-        )
-        description += (
-            f"\n- Interest in Dining: {cluster_data['Interest in Dining']:.1f}/100"
-        )
+        description += f"\n- Interest in Sports: {cluster_data['Interest in Sports']:.1f}/100"
+        description += f"\n- Interest in Dining: {cluster_data['Interest in Dining']:.1f}/100"
         description += f"\n- Interest in Gardening: {cluster_data['Interest in Gardening']:.1f}/100"
-        description += (
-            f"\n- Interest in Music: {cluster_data['Interest in Music']:.1f}/100"
-        )
+        description += f"\n- Interest in Music: {cluster_data['Interest in Music']:.1f}/100"
         description += f"\n- Average Household Income: ${cluster_data['Household Income (k$)']:.1f}k"
         descriptions.append(description)
     return descriptions
@@ -194,7 +200,9 @@ def plot_deviation_heatmap(data, cluster_means):
     overall_means = data.mean()
     deviations = (cluster_means - overall_means) / overall_means
     plt.figure(figsize=(12, 8))
-    sns.heatmap(deviations, annot=True, cmap="coolwarm", center=0, linewidths=0.5)
+    sns.heatmap(
+        deviations, annot=True, cmap="coolwarm", center=0, linewidths=0.5
+    )
     plt.title("Deviation of Cluster Averages from Overall Average")
     st.pyplot(plt.gcf())
     plt.clf()
@@ -205,7 +213,9 @@ def plot_attribute_distributions(data, features):
     for feature in features:
         plt.figure(figsize=(10, 6))
         if feature == "Region":
-            sns.countplot(x="Cluster", hue=feature, data=data, palette="viridis")
+            sns.countplot(
+                x="Cluster", hue=feature, data=data, palette="viridis"
+            )
             plt.title(f"Distribution of {feature} by Cluster")
             st.pyplot(plt.gcf())
             plt.clf()
@@ -217,7 +227,7 @@ def plot_attribute_distributions(data, features):
 
 
 # Streamlit app
-def main():
+def clustering_main():
     st.title("Customer Segmentation Using K-Means Clustering")
     st.write(
         """
@@ -286,7 +296,3 @@ def main():
         # Plot attribute distributions by cluster
         st.subheader("Attribute Distributions by Cluster")
         plot_attribute_distributions(data, features)
-
-
-if __name__ == "__main__":
-    main()
