@@ -13,11 +13,31 @@ def load_data(file_path):
     return pd.read_csv(file_path)
 
 
-# K-Means clustering
+@st.cache_resource
 def kmeans_clustering(data, num_clusters):
     kmeans = KMeans(n_clusters=num_clusters, random_state=42)
     clusters = kmeans.fit_predict(data)
     return clusters, kmeans
+
+
+@st.cache_data
+def calculate_cluster_means(data):
+    numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+    return data.groupby("Cluster")[numeric_cols].mean()
+
+
+@st.cache_data
+def compute_pca_and_transform(data):
+    pca = PCA(n_components=2)  # Reduce to 2D for visualization
+    pca_transformed = pca.fit_transform(data)
+    return pd.DataFrame(pca_transformed, columns=["PCA1", "PCA2"])
+
+
+@st.cache_data
+def calculate_deviation_heatmap(data, cluster_means):
+    overall_means = data.mean()
+    deviations = (cluster_means - overall_means) / overall_means
+    return deviations
 
 
 # Generate textual descriptions for each cluster
@@ -43,10 +63,8 @@ def generate_cluster_descriptions(data, cluster_means):
 
 # Plot clusters
 def plot_clusters(data, kmeans, num_clusters):
-    pca = PCA(2)
-    pca_data = pca.fit_transform(data)
-    pca_data = pd.DataFrame(pca_data, columns=["PCA1", "PCA2"])
-    pca_data["Cluster"] = kmeans.labels_
+    pca_data = compute_pca_and_transform(data)
+    pca_data["Cluster"] = kmeans.labels_  # Assign cluster labels
 
     plt.figure(figsize=(10, 6))
     sns.scatterplot(
@@ -64,8 +82,7 @@ def plot_clusters(data, kmeans, num_clusters):
 
 # Create a heatmap of deviations from overall average
 def plot_deviation_heatmap(data, cluster_means):
-    overall_means = data.mean()
-    deviations = (cluster_means - overall_means) / overall_means
+    deviations = calculate_deviation_heatmap(data, cluster_means)
     plt.figure(figsize=(12, 8))
     sns.heatmap(
         deviations, annot=True, cmap="coolwarm", center=0, linewidths=0.5
@@ -148,8 +165,7 @@ def clustering_main():
 
         # Cluster descriptions
         st.subheader("Cluster Descriptions")
-        numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
-        cluster_means = data.groupby("Cluster")[numeric_cols].mean()
+        cluster_means = calculate_cluster_means(data)
 
         # Plot heatmap of deviations
         plot_deviation_heatmap(data[features], cluster_means)

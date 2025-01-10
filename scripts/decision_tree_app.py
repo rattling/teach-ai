@@ -23,7 +23,7 @@ from sklearn.tree import export_graphviz
 # Function to load data
 @st.cache_data
 def load_data(file_path):
-    print(f"Loading data from {file_path}")
+    # print(f"Loading data from {file_path}")
     return pd.read_csv(file_path)
 
 
@@ -39,6 +39,67 @@ def fraud_detection():
     st.header("Fraud Detection with Decision Tree")
     return load_data("data/fraud_detection.csv")
     # Add feature engineering, model training, evaluation, and visualization code here
+
+
+@st.cache_resource
+def train_decision_tree(X_train, y_train, max_depth):
+    clf = DecisionTreeClassifier(max_depth=max_depth, random_state=42)
+    clf.fit(X_train, y_train)
+    return clf
+
+
+@st.cache_data
+def preprocess_data(data):
+    return pd.get_dummies(data, columns=["education_level"])
+
+
+@st.cache_data
+def split_data(data):
+    X = data.drop("creditworthy", axis=1)
+    y = data["creditworthy"]
+    return train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+@st.cache_data
+def compute_correlation(data):
+    return data.corr()
+
+
+@st.cache_data
+def render_decision_tree_graph(
+    _clf, _feature_names, _class_names, decision_path
+):
+    # Convert feature names to a standard list
+    feature_names_list = list(_feature_names)
+
+    # Export the decision tree to DOT format
+    dot_data = export_graphviz(
+        _clf,
+        out_file=None,
+        feature_names=feature_names_list,  # Ensure it's a list
+        class_names=_class_names,
+        filled=True,
+        rounded=True,
+        special_characters=True,
+    )
+    # Convert to graph
+    graph = pydotplus.graph_from_dot_data(dot_data)
+
+    # Highlight the decision path
+    for node_id in decision_path:
+        node = graph.get_node(str(node_id))[0]
+        node.set_fillcolor("yellow")
+
+    # Convert graph to PNG image
+    image_data = graph.create_png()
+    return image_data
+
+
+@st.cache_data
+def predict_new_customer(_clf, new_customer_df):
+    prediction = _clf.predict(new_customer_df)[0]
+    prediction_proba = _clf.predict_proba(new_customer_df)[0]
+    return prediction, prediction_proba
 
 
 def decision_tree_main():
@@ -131,11 +192,13 @@ def decision_tree_main():
         x="variable", y="value", hue="creditworthy", data=data_melted, ax=ax
     )
 
+    correlation_matrix = compute_correlation(data)
+
     st.pyplot(fig)
     # Create a new figure for the heatmap
     st.write("### Correlation Heatmap")
     fig, ax = plt.subplots(figsize=(15, 10))
-    sns.heatmap(data.corr(), annot=True, cmap="coolwarm", ax=ax)
+    sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", ax=ax)
     st.pyplot(fig)
 
     # Model Training
@@ -146,12 +209,7 @@ def decision_tree_main():
     """
     )
 
-    # Split data into train and test sets
-    X = data.drop("creditworthy", axis=1)
-    y = data["creditworthy"]
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = split_data(data)
 
     # Show data split information and pie chart side by side
     st.write("### Split Data into Train and Test")
@@ -186,8 +244,7 @@ def decision_tree_main():
         X, y, test_size=0.2, random_state=42
     )
 
-    clf = DecisionTreeClassifier(max_depth=max_depth, random_state=42)
-    clf.fit(X_train, y_train)
+    clf = train_decision_tree(X_train, y_train, max_depth)
 
     st.write("### Decision Tree")
     fig, ax = plt.subplots(figsize=(20, 10))
@@ -254,7 +311,7 @@ def decision_tree_main():
     # Plot confusion matrix
     st.write("### Confusion Matrix")
     fig, ax = plt.subplots(
-        figsize=(2, 2)
+        figsize=(1, 1), dpi=600
     )  # Adjust figure size to make confusion matrix smaller
     sns.heatmap(
         conf_matrix,
@@ -265,6 +322,7 @@ def decision_tree_main():
         yticklabels=["Not Creditworthy", "Creditworthy"],
         ax=ax,
         cbar=False,
+        annot_kws={"size": 3},  # Smaller font for annotations
     )
     ax.set_xlabel("Predicted")
     ax.set_ylabel("True")
@@ -272,11 +330,20 @@ def decision_tree_main():
     # Adjust font size for tick labels
     ax.tick_params(axis="both", which="major", labelsize=6)
 
+    # Reduce font size for xticklabels and yticklabels
+    ax.set_xticklabels(
+        ax.get_xticklabels(), fontsize=3
+    )  # Adjust x-axis label font size
+    ax.set_yticklabels(
+        ax.get_yticklabels(), fontsize=3
+    )  # Adjust y-axis label font size
+
     # Move the x-axis label to the top
     ax.xaxis.set_label_position("top")
     ax.xaxis.tick_top()
 
     st.pyplot(fig)
+    plt.close(fig)
 
     # Inference
     st.header("Inference on New Data")
@@ -308,8 +375,7 @@ def decision_tree_main():
     st.write(new_customer_df)
 
     # Make a prediction
-    prediction = clf.predict(new_customer_df)[0]
-    prediction_proba = clf.predict_proba(new_customer_df)[0]
+    prediction, prediction_proba = predict_new_customer(clf, new_customer_df)
 
     # Display the prediction
     prediction_label = (
@@ -345,28 +411,13 @@ def decision_tree_main():
     # Get the decision path
     decision_path = get_decision_path(clf, new_customer_df.values)
 
-    # Export the decision tree to DOT format
-    dot_data = export_graphviz(
-        clf,
-        out_file=None,
-        feature_names=X.columns,
-        class_names=["Not Creditworthy", "Creditworthy"],
-        filled=True,
-        rounded=True,
-        special_characters=True,
+    # Render the decision tree graph
+    image_data = render_decision_tree_graph(
+        _clf=clf,  # Model passed with underscore
+        _feature_names=X.columns,  # Feature names passed with underscore
+        _class_names=["Not Creditworthy", "Creditworthy"],  # Class names
+        decision_path=decision_path,  # Decision path
     )
 
-    # Convert to graph
-    graph = pydotplus.graph_from_dot_data(dot_data)
-
-    # Highlight the decision path
-    for node_id in decision_path:
-        node = graph.get_node(str(node_id))[0]
-        node.set_fillcolor("yellow")
-
-    # Convert graph to PNG image
-    image_data = graph.create_png()
-    image = Image.open(BytesIO(image_data))
-
     # Display the image in Streamlit
-    st.image(image)
+    st.image(Image.open(BytesIO(image_data)))

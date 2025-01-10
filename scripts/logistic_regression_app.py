@@ -16,7 +16,7 @@ from matplotlib_venn import venn2
 
 @st.cache_data
 def load_data(file_path):
-    print(f"Loading data from {file_path}")
+    # print(f"Loading data from {file_path}")
     return pd.read_csv(file_path)
 
 
@@ -32,6 +32,13 @@ def calculate_precision_recall(clf, X_test, y_test, thresholds):
         recall_scores.append(recall_score(y_test, y_pred))
 
     return precision_scores, recall_scores
+
+
+@st.cache_resource
+def train_logistic_regression(X_train, y_train):
+    clf = LogisticRegression(random_state=42, max_iter=1000)
+    clf.fit(X_train, y_train)
+    return clf
 
 
 def logistic_regression_main():
@@ -88,12 +95,14 @@ def logistic_regression_main():
     )
 
     st.pyplot(fig)
+    plt.close(fig)
 
     # Create a new figure for the heatmap
     st.write("### Correlation Heatmap")
     fig, ax = plt.subplots(figsize=(15, 10))
     sns.heatmap(data.corr(), annot=True, cmap="coolwarm", ax=ax)
     st.pyplot(fig)
+    plt.close(fig)
 
     # Model Training
     st.header("Model Training")
@@ -109,8 +118,7 @@ def logistic_regression_main():
         X, y, test_size=0.2, random_state=42
     )
 
-    clf = LogisticRegression(random_state=42, max_iter=1000)
-    clf.fit(X_train, y_train)
+    clf = train_logistic_regression(X_train, y_train)
 
     st.write("### Logistic Regression Model")
     st.write(f"Model Coefficients: {clf.coef_}")
@@ -206,6 +214,7 @@ def logistic_regression_main():
     ax.xaxis.tick_top()
 
     st.pyplot(fig)
+    plt.close(fig)
 
     # Explanation of confusion matrix
     st.markdown(
@@ -238,3 +247,4 @@ def logistic_regression_main():
     ax.legend(loc="best")
 
     st.pyplot(fig)
+    plt.close(fig)
